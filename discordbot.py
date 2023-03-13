@@ -188,7 +188,7 @@ async def pullEmoji(champId):
                 return "<:" + str(champId) + ":" + x.strip().split(" ")[1] + ">"
         return orbId
     else:
-        return championDatabase["keys"][int(champId)]
+        return championDatabase["keys"][str(champId)]
 
 # gets current watched summoners data (for live games)
 async def getCurrentSummoners(summonerName):
