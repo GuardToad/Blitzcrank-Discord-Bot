@@ -48,7 +48,7 @@ def getSummoner(summoner):
         loadingAttempts -= 1
         if loadingAttempts != 0:
             try:
-                summonerData = requests.get(f"https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summoner}?api_key={riotAPI}",timeout=10).json()
+                summonerData = requests.get(f"https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summoner}?api_key={riotAPI}",timeout=10).json()
                 name = summonerData["name"]
                 return summonerData
             except:
@@ -77,7 +77,7 @@ def getMatchMvp(matchId,summonerName):
     json_data = {
         'operationName': 'LolMatchDetailsQuery',
         'variables': {
-            'region': 'NA',
+            'region': 'EUW',
             'summonerName': summonerName,
             'matchId': int(matchId),
         },
@@ -111,7 +111,7 @@ async def isPlaying(summonerID):
         loadingAttempts -= 1
         if loadingAttempts != 0:
             try:
-                results = requests.get(f"https://na1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/{summonerID}?api_key={riotAPI}",timeout=10)
+                results = requests.get(f"https://euw1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/{summonerID}?api_key={riotAPI}",timeout=10)
                 if results.status_code != 200:
                     return False
                 else:
@@ -143,7 +143,7 @@ async def getHighestRank(summoner):
         loadingAttempts -= 1
         if loadingAttempts != 0:
             try:
-                r = requests.get(f"https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/{summonerId}?api_key={riotAPI}").json()
+                r = requests.get(f"https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner/{summonerId}?api_key={riotAPI}").json()
                 break
             except:
                 await asyncio.sleep(5)
@@ -271,7 +271,7 @@ def downloadImage(url):
     return "./discord bots/leaguebot/" + fileName
 
 # gets latest game version and latest champion database
-latestVersion = requests.get("https://ddragon.leagueoflegends.com/realms/na.json").json()["v"]
+latestVersion = requests.get("https://ddragon.leagueoflegends.com/realms/euw.json").json()["v"]
 championDatabase = requests.get(f"https://ddragon.leagueoflegends.com/cdn/{latestVersion}/data/en_US/championFull.json").json()
 
 ###########################################################################
@@ -320,7 +320,7 @@ async def background_task():
 async def on_message(message):
     if message.author.bot:
         return
-    searchQuery = "https://na.op.gg/multisearch/na?summoners="
+    searchQuery = "https://euw.op.gg/multisearch/euw?summoners="
     if "joined the lobby" in str(message.content):
         for line in message.content.split("\n"):
             name = line.split(" joined")[0].replace(" ","+")
@@ -379,7 +379,7 @@ async def gameCheck():
             loadingAttempts -= 1
             if loadingAttempts != 0:
                 try:
-                    matchResults = requests.get(f"https://americas.api.riotgames.com/lol/match/v5/matches/NA1_{matchID}?api_key={riotAPI}",timeout=10)
+                    matchResults = requests.get(f"https://europe.api.riotgames.com/lol/match/v5/matches/EUW1_{matchID}?api_key={riotAPI}",timeout=10)
                     break
                 except:
                     await asyncio.sleep(5)
@@ -436,13 +436,13 @@ async def gameCheck():
                 currentSummoners.pop(player["summonerName"].strip())
 
             # create embed
-            embedHeader = f"{uggId} [Link 🔗](https://u.gg/lol/profile/na1/{summonerName}) | {opggId} [Link 🔗](https://na.op.gg/summoner/userName={summonerName}) | {mobalyticsId} [Link 🔗](https://app.mobalytics.gg/lol/profile/na/{summonerName}) | {porofessorId} [Link 🔗](https://www.leagueofgraphs.com/summoner/na/{summonerName})\n\n" if useIconEmojis else f"U.GG [Link 🔗](https://u.gg/lol/profile/na1/{summonerName}) | OP.GG [Link 🔗](https://na.op.gg/summoner/userName={summonerName}) | Mobalytics [Link 🔗](https://app.mobalytics.gg/lol/profile/na/{summonerName}) | Porofessor [Link 🔗](https://www.leagueofgraphs.com/summoner/na/{summonerName})\n\n"
+            embedHeader = f"{uggId} [Link 🔗](https://u.gg/lol/profile/euw1/{summonerName}) | {opggId} [Link 🔗](https://euw.op.gg/summoner/userName={summonerName}) | {mobalyticsId} [Link 🔗](https://app.mobalytics.gg/lol/profile/euw/{summonerName}) | {porofessorId} [Link 🔗](https://www.leagueofgraphs.com/summoner/euw/{summonerName})\n\n" if useIconEmojis else f"U.GG [Link 🔗](https://u.gg/lol/profile/euw1/{summonerName}) | OP.GG [Link 🔗](https://euw.op.gg/summoner/userName={summonerName}) | Mobalytics [Link 🔗](https://app.mobalytics.gg/lol/profile/euw/{summonerName}) | Porofessor [Link 🔗](https://www.leagueofgraphs.com/summoner/euw/{summonerName})\n\n"
             if (gameDuration < 900) and (queueType != "ARAM"):
-                newEmbed=discord.Embed(description=embedHeader + "⚠️**REMAKE**⚠️\n\nMatch Duration: `"+ await convert(gameDuration)+"` [*](https://app.mobalytics.gg/lol/match/na/" + summonerName + "/" + matchID + ")",timestamp=datetime.datetime.utcnow(), color=0xc0c0c0)
+                newEmbed=discord.Embed(description=embedHeader + "⚠️**REMAKE**⚠️\n\nMatch Duration: `"+ await convert(gameDuration)+"` [*](https://app.mobalytics.gg/lol/match/euw/" + summonerName + "/" + matchID + ")",timestamp=datetime.datetime.utcnow(), color=0xc0c0c0)
             elif (gameWon):
-                newEmbed=discord.Embed(description=embedHeader + "Match Duration: `"+ await convert(gameDuration)+"` [*](https://app.mobalytics.gg/lol/match/na/" + summonerName + "/" + matchID + ") :regional_indicator_w:",timestamp=datetime.datetime.utcnow(), color=0x8BD3E6)
+                newEmbed=discord.Embed(description=embedHeader + "Match Duration: `"+ await convert(gameDuration)+"` [*](https://app.mobalytics.gg/lol/match/euw/" + summonerName + "/" + matchID + ") :regional_indicator_w:",timestamp=datetime.datetime.utcnow(), color=0x8BD3E6)
             else:
-                newEmbed=discord.Embed(description=embedHeader + "Match Duration: `"+ await convert(gameDuration)+"` [*](https://app.mobalytics.gg/lol/match/na/" + summonerName + "/" + matchID + ") :regional_indicator_l:",timestamp=datetime.datetime.utcnow(), color=0xE7548C)
+                newEmbed=discord.Embed(description=embedHeader + "Match Duration: `"+ await convert(gameDuration)+"` [*](https://app.mobalytics.gg/lol/match/euw/" + summonerName + "/" + matchID + ") :regional_indicator_l:",timestamp=datetime.datetime.utcnow(), color=0xE7548C)
             newEmbed.set_author(name=f"{summonerName}'s Match Results",icon_url=f"https://ddragon.leagueoflegends.com/cdn/{latestVersion}/img/profileicon/" + str(summoner["profileIconId"]) + ".png")
             newEmbed.set_footer(text=f"ID: {matchID} • powered by shdw 👻",icon_url="https://i.imgur.com/ri6NrsN.png")
             newEmbed.add_field(name="Gamemode",value=queueType,inline = False)
@@ -478,7 +478,7 @@ async def gamerCheck(summoner):
         profileIcon = summoner["profileIconId"]
 
         if (await isPlaying(summoner["id"])):
-            current = cass.get_current_match(summoner=name,region="NA")
+            current = cass.get_current_match(summoner=name,region="EUW")
 
             if current.id in foundGames:
                 return
@@ -490,7 +490,7 @@ async def gamerCheck(summoner):
                 if loadingAttempts != 0:
                     try:
                         summonerId = summoner["id"]
-                        matchQueue = await parseQueue(requests.get(f"https://na1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/{summonerId}?api_key={riotAPI}",timeout=10).json()["gameQueueConfigId"])
+                        matchQueue = await parseQueue(requests.get(f"https://euw1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/{summonerId}?api_key={riotAPI}",timeout=10).json()["gameQueueConfigId"])
                         break
                     except:
                         await asyncio.sleep(5)
@@ -534,7 +534,7 @@ async def gamerCheck(summoner):
                 for x in redSummoners:
                     redteamcomp += "\n" + await pullEmoji(str(x)) + " - `" + redSummoners[x].strip() + "`"
             summonerName = name.replace(" ","")
-            embedHeader = f"{uggId} [Link 🔗](https://u.gg/lol/profile/na1/{summonerName}) | {opggId} [Link 🔗](https://na.op.gg/summoner/userName={summonerName}) | {mobalyticsId} [Link 🔗](https://app.mobalytics.gg/lol/profile/na/{summonerName}) | {porofessorId} [Link 🔗](https://www.leagueofgraphs.com/summoner/na/{summonerName})" if useIconEmojis else f"U.GG [Link 🔗](https://u.gg/lol/profile/na1/{summonerName}) | OP.GG [Link 🔗](https://na.op.gg/summoner/userName={summonerName}) | Mobalytics [Link 🔗](https://app.mobalytics.gg/lol/profile/na/{summonerName}) | Porofessor [Link 🔗](https://www.leagueofgraphs.com/summoner/na/{summonerName})"
+            embedHeader = f"{uggId} [Link 🔗](https://u.gg/lol/profile/euw1/{summonerName}) | {opggId} [Link 🔗](https://euw.op.gg/summoner/userName={summonerName}) | {mobalyticsId} [Link 🔗](https://app.mobalytics.gg/lol/profile/euw/{summonerName}) | {porofessorId} [Link 🔗](https://www.leagueofgraphs.com/summoner/euw/{summonerName})" if useIconEmojis else f"U.GG [Link 🔗](https://u.gg/lol/profile/euw1/{summonerName}) | OP.GG [Link 🔗](https://euw.op.gg/summoner/userName={summonerName}) | Mobalytics [Link 🔗](https://app.mobalytics.gg/lol/profile/euw/{summonerName}) | Porofessor [Link 🔗](https://www.leagueofgraphs.com/summoner/euw/{summonerName})"
             embed=discord.Embed(description=embedHeader,timestamp=datetime.datetime.utcnow(), color=0x62C979)
             embed.set_author(name=name + "'s Live Game 👁‍🗨",icon_url=f"https://ddragon.leagueoflegends.com/cdn/{latestVersion}/img/profileicon/{profileIcon}.png")
             embed.set_footer(text=f"ID: {current.id} • powered by shdw 👻",icon_url="https://i.imgur.com/ri6NrsN.png")
@@ -570,7 +570,7 @@ async def getLeagueRanks(summonerInfo):
         loadingAttempts -= 1
         if loadingAttempts != 0:
             try:
-                req = requests.get(f"https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/{summId}?api_key={riotAPI}",timeout=10).json()
+                req = requests.get(f"https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner/{summId}?api_key={riotAPI}",timeout=10).json()
                 break
             except:
                 await asyncio.sleep(5)
